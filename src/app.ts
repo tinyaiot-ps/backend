@@ -4,6 +4,8 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 const dotenv = require('dotenv');
 
+import authRouter from './routes/auth';
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -28,6 +30,8 @@ app.use((req: any, res: any, next: any) => {
 });
 
 app.use(cors(corsOptions));
+
+app.use('/api/v1/', authRouter);
 
 // Connect to MongoDB
 mongoose
