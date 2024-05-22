@@ -3,6 +3,7 @@ import {
   getAllTrashItems,
   getTrashItemById,
   createTrashItem,
+  updateTrashItem,
 } from '../controllers/trashbin';
 import { authenticateToken } from '../middleware/authenticate';
 const router = Router();
@@ -15,5 +16,7 @@ router.get('/', authenticateToken, getAllTrashItems);
 
 // Create a new trash item
 router.post('/', authenticateToken, createTrashItem);
+
+router.patch('/:id', authenticateToken, updateTrashItem);
 
 export default router;

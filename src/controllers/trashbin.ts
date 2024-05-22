@@ -49,6 +49,47 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
   }
 };
 
+// Update the trash item
+export const updateTrashItem = async (req: any, res: any, next: any) => {
+  try {
+    const trashbinId = req.params.id;
+    const trashbin = await Trashbin.findById(trashbinId);
+
+    if (!trashbin) {
+      return res.status(404).json({ message: 'Trashbin not found' });
+    }
+
+    const userId = req.user.id;
+    const userRole = req.user.role;
+
+    const project: any = await Project.findById(trashbin.project);
+
+    if (
+      userRole === 'SUPERADMIN' ||
+      (userRole === 'ADMIN' && project.users.includes(userId))
+    ) {
+      // Update the trashbin here
+
+      const { longitude, latitude, sensors, location } = req.body;
+
+      trashbin.coordinates = [longitude, latitude];
+      trashbin.sensors = sensors;
+      trashbin.location = location;
+
+      await trashbin.save();
+      return res
+        .status(200)
+        .json({ message: 'Trash can updated successfully' });
+    } else {
+      return res
+        .status(403)
+        .json({ message: 'Unauthorized to update trash can' });
+    }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getTrashItemById = async (req: any, res: any, next: any) => {
   try {
     const trashbinId = req.params.id;
