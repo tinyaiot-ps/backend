@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 const dotenv = require('dotenv');
 
 import authRouter from './routes/auth';
+import cityRouter from './routes/city';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,7 +32,8 @@ app.use((req: any, res: any, next: any) => {
 
 app.use(cors(corsOptions));
 
-app.use('/api/v1/', authRouter);
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/city', cityRouter);
 
 // Connect to MongoDB
 mongoose

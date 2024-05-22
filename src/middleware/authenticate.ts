@@ -7,8 +7,6 @@ export const authenticateToken = (req: any, res: any, next: any) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_STRING
 
-  console.log('The token is =>', token);
-
   if (token == null) return res.sendStatus(401); // if there's no token
 
   if (isTokenExpired(token)) return res.sendStatus(401); // if the token is expired
