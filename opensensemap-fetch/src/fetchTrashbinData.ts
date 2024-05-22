@@ -1,7 +1,6 @@
 //working:
 import axios from 'axios';
 
-// URL der OpenSenseMap API
 const API_URL = 'https://api.opensensemap.org/boxes/';
 const SENSOR_ID = '65f9865dad2eb20007aad333'; 
 
