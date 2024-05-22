@@ -15,6 +15,7 @@
     "mongodb": "^6.6.2"
   },
   "devDependencies": {
-    "@types/axios": "^0.14.0"
+    "@types/axios": "^0.14.0",
+    "@types/node": "^20.12.12"
   }
 }
