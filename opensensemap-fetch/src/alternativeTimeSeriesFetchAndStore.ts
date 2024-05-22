@@ -33,8 +33,8 @@ async function fetchAndStoreSensorMeasurements(
   
     const insertDocuments = measurements.map((measurement: any) => ({
       metadata: { 
+        senseBoxId: senseBoxId,
         sensorId: sensorId, 
-        type: measurement.sensorType,
         location: { 
           type: 'Point',
           coordinates: [measurement.location.longitude, measurement.location.latitude]

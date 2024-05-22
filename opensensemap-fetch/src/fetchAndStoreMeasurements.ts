@@ -48,5 +48,4 @@ async function fetchAndStoreSensorMeasurements(
   }
 }
   
-// Start:
 fetchAndStoreSensorMeasurements(SENSEBOX_ID, SENSOR_ID, FROM_DATE, TO_DATE);
