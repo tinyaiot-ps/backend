@@ -9,8 +9,9 @@ const projectSchema = new Schema(
       unique: true,
     },
     city: {
-      required: true,
+      type: Schema.Types.ObjectId,
       ref: 'City',
+      required: true,
     },
     users: [
       {
