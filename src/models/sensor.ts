@@ -23,6 +23,7 @@ const sensorSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'History',
+        default: '',
       },
     ],
   },

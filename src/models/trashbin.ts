@@ -14,7 +14,6 @@ const trashbinSchema = new Schema(
     },
     location: {
       type: String,
-      required: true,
     },
     project: {
       type: Schema.Types.ObjectId,
@@ -25,6 +24,7 @@ const trashbinSchema = new Schema(
       {
         type: Schema.Types.ObjectId,
         ref: 'Sensor',
+        default: [],
       },
     ],
   },
