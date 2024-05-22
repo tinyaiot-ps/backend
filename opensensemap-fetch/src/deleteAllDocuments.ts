@@ -2,7 +2,7 @@
 const { MongoClient } = require('mongodb');
 const MONGO_URI = 'mongodb+srv://nilsloeken:eLFSfF1gKGl7WVOa@tinyaiot.hwv61ob.mongodb.net/'; 
 const DATABASE_NAME = 'OpenSenseMapData';
-const COLLECTION_NAME = 'OpenSenseMapData';
+const COLLECTION_NAME = 'OSMTimeSeries';
 
 async function deleteAllDocuments() {
   const client = new MongoClient(MONGO_URI);

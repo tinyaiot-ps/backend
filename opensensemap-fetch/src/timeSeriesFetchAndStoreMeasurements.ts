@@ -1,6 +1,6 @@
 //working:
 import axios from 'axios';
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient, Db, Collection, ObjectId } from 'mongodb';
 
 // Connection parameters (to be relocated)
 const MONGO_URI = 'mongodb+srv://nilsloeken:eLFSfF1gKGl7WVOa@tinyaiot.hwv61ob.mongodb.net/';
@@ -21,11 +21,12 @@ async function connectToMongoDB(uri: string): Promise<{ db: Db, client: MongoCli
   return { db, client };
 }
 
+// Interface for measurement data
 interface Measurement {
-  _id?: string; // for debugging purposes
+  _id?: ObjectId | undefined; //for debugging purposes
   value: string;
   location: [number, number];
-  createdAt: string;
+  createdAt: Date;
 }
 
 // Function to fetch measurements from OpenSenseMap API and store in db
@@ -40,18 +41,12 @@ async function fetchAndStoreSensorMeasurements(
     const response = await axios.get(url);
     const measurements: Measurement[] = response.data;
 
-    // Transform data to Date format
-    const transformedMeasurements = measurements.map(({ _id, ...measurement }) => ({
-      ...measurement,
-      createdAt: new Date(measurement.createdAt)
-    }));
-
     // Connect to db and specific collection
     const { db, client } = await connectToMongoDB(MONGO_URI);
     const collection: Collection = db.collection('OSMTimeSeries');
 
     // Insert measurement data in collection
-    const insertResult = await collection.insertMany(transformedMeasurements);
+    const insertResult = await collection.insertMany(measurements);
     console.log(`Inserted ${insertResult.insertedCount} measurements into MongoDB`);
 
     // Close connection to db
