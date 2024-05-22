@@ -21,7 +21,7 @@ export const loginUser = async (req: any, res: any) => {
     // Generate a token
     const token = jwt.sign(
       { id: user._id, role: user.role },
-      process.env.JWT_SECRET || 'default_secret', // Fallback secret
+      process.env.JWT_SECRET_KEY || 'default_secret', // Fallback secret
       { expiresIn: '48h' }
     );
 
@@ -42,21 +42,21 @@ export const loginUser = async (req: any, res: any) => {
 
 export const signupUser = async (req: any, res: any) => {
   const { role, email, password, projects, preferences } = req.body;
-  // const currentUserId = req.user.id; // Assuming user ID is attached to the request by auth middleware
-  // const currentUserRole = req.user.role; // Assuming user role is attached to the request by auth middleware
+  const currentUserId = req.user.id; // Assuming user ID is attached to the request by auth middleware
+  const currentUserRole = req.user.role; // Assuming user role is attached to the request by auth middleware
 
   try {
     // Check if the current user has the right to create the specified role
-    // if (currentUserRole === 'ADMIN' && role !== 'USER') {
-    //   return res
-    //     .status(403)
-    //     .json({ message: 'Admins can only create user type users.' });
-    // }
-    // if (currentUserRole === 'SUPERADMIN' && role === 'SUPERADMIN') {
-    //   return res
-    //     .status(403)
-    //     .json({ message: 'Cannot create another SUPERADMIN.' });
-    // }
+    if (currentUserRole === 'ADMIN' && role !== 'USER') {
+      return res
+        .status(403)
+        .json({ message: 'Admins can only create user type users.' });
+    }
+    if (currentUserRole === 'SUPERADMIN' && role === 'SUPERADMIN') {
+      return res
+        .status(403)
+        .json({ message: 'Cannot create another SUPERADMIN.' });
+    }
 
     // Validate email uniqueness
     const existingUser = await User.findOne({ email });
@@ -84,8 +84,6 @@ export const signupUser = async (req: any, res: any) => {
     });
 
     await newUser.save();
-
-    // Optionally, create a token or perform other post-creation actions
 
     res
       .status(201)

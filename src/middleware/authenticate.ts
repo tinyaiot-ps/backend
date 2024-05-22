@@ -7,6 +7,8 @@ export const authenticateToken = (req: any, res: any, next: any) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_STRING
 
+  console.log('The token is =>', token);
+
   if (token == null) return res.sendStatus(401); // if there's no token
 
   if (isTokenExpired(token)) return res.sendStatus(401); // if the token is expired
@@ -14,6 +16,7 @@ export const authenticateToken = (req: any, res: any, next: any) => {
   jwt.verify(token, process.env.JWT_SECRET_KEY, (err: any, user: any) => {
     if (err) return res.sendStatus(403); // any error means a bad token
     req.user = user;
+
     next(); // proceed to the next middleware function
   });
 };

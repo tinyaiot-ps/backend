@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { loginUser, signupUser } from '../controllers/auth';
+import { authenticateToken } from '../middleware/authenticate';
 
 const router = Router();
 
@@ -7,6 +8,6 @@ const router = Router();
 router.post('/login', loginUser);
 
 // Signup route
-router.post('/signup', signupUser);
+router.post('/signup', authenticateToken, signupUser);
 
 export default router;
