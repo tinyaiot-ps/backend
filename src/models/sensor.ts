@@ -17,7 +17,7 @@ const sensorSchema = new Schema(
     unit: {
       type: String,
       enum: ['percentage'],
-      required: true,
+      default: 'percentage',
     },
     history: [
       {
