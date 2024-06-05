@@ -92,3 +92,65 @@ export const signupUser = async (req: any, res: any) => {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 };
+
+export const updateUser = async (req: any, res: any) => {
+  const { userId, role, email, password, projects, preferences } = req.body;
+  const currentUserId = req.user.id;
+  const currentUserRole = req.user.role;
+
+  try {
+    // Fetch the user to be updated
+    const userToUpdate = await User.findById(userId);
+    if (!userToUpdate) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Check if the current user has the right to update the specified user
+    if (currentUserRole === 'USER' && currentUserId !== userId) {
+      return res
+        .status(403)
+        .json({ message: 'Users can only update themselves.' });
+    }
+
+    if (
+      currentUserRole === 'ADMIN' &&
+      currentUserId !== userId &&
+      !userToUpdate.projects.includes(currentUserId)
+    ) {
+      return res.status(403).json({
+        message:
+          'Admins can only update users of their project and themselves.',
+      });
+    }
+
+    // SuperAdmin can update all users, no additional checks needed
+
+    // Validate email uniqueness if email is being updated
+    if (email && email !== userToUpdate.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(409).json({ message: 'Email already in use.' });
+      }
+      userToUpdate.email = email;
+    }
+
+    // Hash password if it's being updated
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      userToUpdate.password = await bcrypt.hash(password, salt);
+    }
+
+    // Update other fields
+    if (role) userToUpdate.role = role;
+    if (projects) userToUpdate.projects = projects;
+    if (preferences) userToUpdate.preferences = preferences;
+
+    await userToUpdate.save();
+
+    res
+      .status(200)
+      .json({ message: 'User updated successfully.', user: userToUpdate });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
