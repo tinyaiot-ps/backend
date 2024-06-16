@@ -10,6 +10,8 @@ import projectRouter from './routes/project';
 import trashbinRouter from './routes/trashbin';
 import sensorRouter from './routes/sensor';
 
+const mqtt = require('mqtt');
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -17,6 +19,28 @@ dotenv.config();
 
 // Middleware
 app.use(bodyParser.json());
+
+const client = mqtt.connect('mqtt://eu1.cloud.thethings.network:1883', {
+  username: 'trashbin-monitoring@ttn',
+  password: process.env.MQTT_CLIENT_KEY,
+});
+
+client.on('connect', () => {
+  console.log('Connected to MQTT broker');
+  const topic = 'v3/trashbin-monitoring@ttn/devices/eui-tinyaiot-device/up';
+  client.subscribe(topic, () => {
+    console.log(`Subscribe to topic '${topic}'`);
+  });
+});
+
+client.on('message', (topic: any, message: any) => {
+  console.log('EVENT RECIEVED with TOPIC', topic);
+  console.log('Received message:', message.toString());
+});
+
+client.on('error', (error: any) => {
+  console.error('MQTT connection error:', error);
+});
 
 const corsOptions = {
   origin: [`http://localhost:${PORT}`],
