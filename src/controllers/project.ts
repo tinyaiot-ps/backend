@@ -62,6 +62,14 @@ export const createProject = async (req: any, res: any) => {
     // Create and save the new project
     const newProject = new Project(req.body);
     const savedProject = await newProject.save();
+
+    // Once the project is create we need to push the projectId to the added users user.projects array
+    savedProject.users.forEach(async (userId: any) => {
+      const user: any = await User.findById(userId);
+      user.projects.push(savedProject._id);
+      await user.save();
+    });
+
     res
       .status(201)
       .json({ message: 'Project created succesfully!', savedProject });
@@ -87,28 +95,43 @@ export const updateProject = async (req: any, res: any) => {
         .json({ message: 'Unauthorized to edit this project' });
     }
 
-    // Check if the city exists
-    const cityExists = await City.findById(req.body.city);
-    if (!cityExists) {
-      return res.status(404).json({ message: 'City not found' });
-    }
-
-    // Check if all users exist
-    const userIds = req.body.users;
-    for (const userId of userIds) {
-      const userExists = await User.findById(userId);
-      if (!userExists) {
-        return res
-          .status(404)
-          .json({ message: `User with ID ${userId} not found` });
+    if (req.body.city) {
+      // Check if the city exists
+      const cityExists = await City.findById(req.body.city);
+      if (!cityExists) {
+        return res.status(404).json({ message: 'City not found' });
       }
     }
 
-    const updatedProject = await Project.findByIdAndUpdate(
+    if (req?.body?.users?.length > 0) {
+      // Check if all users exist
+      const userIds = req.body.users;
+      for (const userId of userIds) {
+        const userExists = await User.findById(userId);
+        if (!userExists) {
+          return res
+            .status(404)
+            .json({ message: `User with ID ${userId} not found` });
+        }
+      }
+    }
+
+    const updatedProject: any = await Project.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
+
+    if (updatedProject.users?.length > 0) {
+      updatedProject.users.forEach(async (userId: any) => {
+        const user: any = await User.findById(userId);
+        if (!user.projects.includes(updatedProject._id)) {
+          user.projects.push(updatedProject._id);
+          await user.save();
+        }
+      });
+    }
+
     res.json(updatedProject);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
