@@ -100,7 +100,8 @@ export const updateUser = async (req: any, res: any) => {
 
   try {
     // Fetch the user to be updated
-    const userToUpdate = await User.findById(userId);
+    const userToUpdate: any = await User.findById(userId);
+    const currentUser: any = await User.findById(currentUserId);
     if (!userToUpdate) {
       return res.status(404).json({ message: 'User not found.' });
     }
@@ -115,7 +116,9 @@ export const updateUser = async (req: any, res: any) => {
     if (
       currentUserRole === 'ADMIN' &&
       currentUserId !== userId &&
-      !userToUpdate.projects.includes(currentUserId)
+      !currentUser.projects.some((project: any) =>
+        userToUpdate.projects.includes(project)
+      )
     ) {
       return res.status(403).json({
         message:
