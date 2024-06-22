@@ -6,9 +6,14 @@ import { Trashbin } from '../models/trashbin';
 export const createTrashItem = async (req: any, res: any, next: any) => {
   try {
     const projectId = req.body.project;
+    const trashcanName = req.body.name;
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
     const project = await Project.findById(projectId);
+
+    if (!trashcanName) {
+      return res.status(400).json({ message: 'Trashcan name is required' });
+    }
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
@@ -19,7 +24,8 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
 
     if (
       userRole === 'SUPERADMIN' ||
-      (userRole === 'ADMIN' && project.users.includes(userId))
+      (userRole === 'ADMIN' && project.users.includes(userId)) ||
+      (userRole === 'USER' && project.users.includes(userId))
     ) {
       //   Create the trashbin here
 
@@ -29,6 +35,7 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
       // Fetch location string from the longitude and latitude
 
       const trashbin = new Trashbin({
+        name: trashcanName,
         identifier: identifer,
         coordinates: [longitude, latitude],
         location: '',
@@ -66,15 +73,23 @@ export const updateTrashItem = async (req: any, res: any, next: any) => {
 
     if (
       userRole === 'SUPERADMIN' ||
-      (userRole === 'ADMIN' && project.users.includes(userId))
+      (userRole === 'ADMIN' && project.users.includes(userId)) ||
+      (userRole === 'USER' && project.users.includes(userId))
     ) {
       // Update the trashbin here
 
-      const { longitude, latitude, sensors, location } = req.body;
+      const {
+        longitude,
+        latitude,
+        sensors,
+        location,
+        name: trashcanName,
+      } = req.body;
 
       trashbin.coordinates = [longitude, latitude];
       trashbin.sensors = sensors;
       trashbin.location = location;
+      trashbin.name = trashcanName;
 
       await trashbin.save();
       return res

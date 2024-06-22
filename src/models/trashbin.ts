@@ -8,6 +8,10 @@ const trashbinSchema = new Schema(
       required: true,
       unique: true,
     },
+    name: {
+      type: String,
+      required: true,
+    },
     coordinates: {
       type: [Number], // [longitude, latitude]
       required: true,

@@ -11,13 +11,17 @@ export const generateUniqueTrashbinIdentifier = async (projectId: string) => {
   }
 
   const cityName = city.name;
+  const formattedCityName = cityName.toLowerCase();
 
-  const latestTrashbin = await Trashbin.findOne().sort({ createdAt: -1 });
+  // Filter by projectId before sorting
+  const latestTrashbin = await Trashbin.findOne({ project: projectId }).sort({
+    createdAt: -1,
+  });
+
   const latestTrashbinCounter = latestTrashbin
     ? parseInt(latestTrashbin.identifier.split('-')[2])
     : 0;
 
-  const formattedCityName = cityName.toLowerCase();
   const counter = (latestTrashbinCounter + 1).toString().padStart(4, '0');
 
   return `${formattedCityName}-trashbin-${counter}`;
