@@ -2,6 +2,9 @@ import { Project } from '../models/project';
 import { City } from '../models/city';
 import { User } from '../models/user';
 
+import { generateUniqueProjectIdentifier } from '../service';
+import mongoose from 'mongoose';
+
 // Get all projects
 export const getAllProjects = async (req: any, res: any) => {
   try {
@@ -17,10 +20,19 @@ export const getAllProjects = async (req: any, res: any) => {
 // Get a single project by ID
 export const getProjectById = async (req: any, res: any) => {
   try {
-    const project = await Project.findById(req.params.id);
+    const { id } = req.params;
+    let project;
+
+    if (mongoose.Types.ObjectId.isValid(id)) {
+      project = await Project.findById(id);
+    } else {
+      project = await Project.findOne({ identifier: id });
+    }
+
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
+
     res.json({ project });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -59,8 +71,15 @@ export const createProject = async (req: any, res: any) => {
       }
     }
 
+    const projectIdentifer = await generateUniqueProjectIdentifier(
+      req.body.city
+    );
+
     // Create and save the new project
-    const newProject = new Project(req.body);
+    const newProject = new Project({
+      ...req.body,
+      identifier: projectIdentifer,
+    });
     const savedProject = await newProject.save();
 
     // Once the project is create we need to push the projectId to the added users user.projects array

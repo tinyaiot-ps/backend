@@ -6,9 +6,8 @@ export const getAllSensors = async (req: any, res: any, next: any) => {
   try {
     // Implement logic to get all sensors
 
-    const sensors = await Sensor.find()
-      .populate('trashbin')
-      .populate('history');
+    const sensors = await Sensor.find().populate('trashbin');
+    // .populate('history');
     res.status(200).json(sensors);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -32,8 +31,9 @@ export const getSensorById = async (req: any, res: any, next: any) => {
 
 export const postSensor = async (req: any, res: any, next: any) => {
   try {
-    const { trashbinID, measure } = req.body;
-    const userID = req.user._id;
+    const { trashbinID, measureType } = req.body;
+    const userID = req.user.id;
+    const userRole = req.user.role;
 
     if (!trashbinID) {
       return res.status(400).json({ message: 'Trashbin ID is required' });
@@ -61,7 +61,7 @@ export const postSensor = async (req: any, res: any, next: any) => {
       (user) => user._id.toString() === userID.toString()
     );
 
-    if (!isUserInProject) {
+    if (!isUserInProject && userRole !== 'SUPERADMIN') {
       return res
         .status(403)
         .json({ message: 'User does not have access to this project' });
@@ -69,7 +69,7 @@ export const postSensor = async (req: any, res: any, next: any) => {
 
     const newSensor = new Sensor({
       trashbin: trashbinID,
-      measure,
+      measureType,
     });
 
     await newSensor.save();

@@ -7,9 +7,8 @@ const sensorSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: 'Trashbin',
       required: true,
-      unique: true, // Ensures a sensor can only be part of one trashcan at a time
     },
-    measure: {
+    measureType: {
       type: String,
       enum: ['fill_level', 'battery_level'],
       required: true,
