@@ -1,6 +1,7 @@
 import { generateUniqueTrashbinIdentifier } from '../service/trashbin';
 import { Project } from '../models/project';
 import { Trashbin } from '../models/trashbin';
+import mongoose from 'mongoose';
 
 // Modify the createTrashItem to support the adding of sensors as well once senser routes are ready
 export const createTrashItem = async (req: any, res: any, next: any) => {
@@ -108,7 +109,13 @@ export const updateTrashItem = async (req: any, res: any, next: any) => {
 export const getTrashItemById = async (req: any, res: any, next: any) => {
   try {
     const trashbinId = req.params.id;
-    const trashbin = await Trashbin.findById(trashbinId);
+    let trashbin;
+
+    if (mongoose.Types.ObjectId.isValid(trashbinId)) {
+      trashbin = await Trashbin.findById(trashbinId);
+    } else {
+      trashbin = await Trashbin.findOne({ identifier: trashbinId });
+    }
 
     if (!trashbin) {
       return res.status(404).json({ message: 'Trashbin not found' });

@@ -8,6 +8,11 @@ const projectSchema = new Schema(
       required: true,
       unique: true,
     },
+    identifier: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     city: {
       type: Schema.Types.ObjectId,
       ref: 'City',
