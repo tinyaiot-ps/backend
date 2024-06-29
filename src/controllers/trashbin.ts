@@ -3,7 +3,6 @@ import { Project } from '../models/project';
 import { Trashbin } from '../models/trashbin';
 import mongoose from 'mongoose';
 
-// Modify the createTrashItem to support the adding of sensors as well once senser routes are ready
 export const createTrashItem = async (req: any, res: any, next: any) => {
   try {
     const projectId = req.body.project;
@@ -112,9 +111,11 @@ export const getTrashItemById = async (req: any, res: any, next: any) => {
     let trashbin;
 
     if (mongoose.Types.ObjectId.isValid(trashbinId)) {
-      trashbin = await Trashbin.findById(trashbinId);
+      trashbin = await Trashbin.findById(trashbinId).populate('assignee');
     } else {
-      trashbin = await Trashbin.findOne({ identifier: trashbinId });
+      trashbin = await Trashbin.findOne({ identifier: trashbinId }).populate(
+        'assignee'
+      );
     }
 
     if (!trashbin) {
@@ -130,7 +131,7 @@ export const getTrashItemById = async (req: any, res: any, next: any) => {
 // Get all trash items
 export const getAllTrashItems = async (req: any, res: any, next: any) => {
   try {
-    const trashbins = await Trashbin.find();
+    const trashbins = await Trashbin.find().populate('assignee');
     return res.status(200).json(trashbins);
   } catch (error: any) {
     res.status(500).json({ message: error.message });
