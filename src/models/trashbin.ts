@@ -12,6 +12,7 @@ const trashbinSchema = new Schema(
       type: String,
       required: true,
     },
+    assignee: { type: mongoose.Types.ObjectId, ref: 'TrashCollector' },
     coordinates: {
       type: [Number], // [longitude, latitude]
       required: true,

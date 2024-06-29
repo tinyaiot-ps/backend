@@ -18,7 +18,6 @@ const sensorSchema = new Schema(
       ref: 'NoiseDetector',
       required: false,
     },
-    // TODO: Change to actual fields instead of unit
     measureType: {
       type: String,
       enum: ['fill_level', 'battery_level', 'sound_level'],
