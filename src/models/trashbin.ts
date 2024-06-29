@@ -25,6 +25,27 @@ const trashbinSchema = new Schema(
       ref: 'Project',
       required: true,
     },
+    signalStrength: {
+      type: Number,
+      max: 100,
+      default: 0,
+    },
+    batteryLevel: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 100,
+    },
+    lastEmptied: {
+      type: Date,
+    },
+    fillLevel: {
+      type: Number,
+    },
+    fillLevelChange: {
+      type: Number,
+      default: 0,
+    },
     sensors: [
       {
         type: Schema.Types.ObjectId,

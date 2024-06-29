@@ -9,6 +9,8 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
     const trashcanName = req.body.name;
     const longitude = req.body.longitude;
     const latitude = req.body.latitude;
+    const signalStrength = req.body.signalStrength;
+    const batteryLevel = req.body.batteryLevel;
     const project = await Project.findById(projectId);
 
     if (!trashcanName) {
@@ -30,7 +32,6 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
       //   Create the trashbin here
 
       const identifer = await generateUniqueTrashbinIdentifier(projectId);
-      console.log('The identifier =>', identifer);
 
       // Fetch location string from the longitude and latitude
 
@@ -40,6 +41,8 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
         coordinates: [longitude, latitude],
         location: '',
         project: projectId,
+        signalStrength: signalStrength || 0,
+        batteryLevel: batteryLevel !== undefined ? batteryLevel : 100,
       });
 
       await trashbin.save();
@@ -84,12 +87,21 @@ export const updateTrashItem = async (req: any, res: any, next: any) => {
         sensors,
         location,
         name: trashcanName,
+        signalStrength,
+        batteryLevel,
       } = req.body;
 
       trashbin.coordinates = [longitude, latitude];
       trashbin.sensors = sensors;
       trashbin.location = location;
       trashbin.name = trashcanName;
+      if (signalStrength !== undefined) {
+        trashbin.signalStrength = signalStrength;
+      }
+
+      if (batteryLevel !== undefined) {
+        trashbin.batteryLevel = batteryLevel; // Added batteryLevel
+      }
 
       await trashbin.save();
       return res
