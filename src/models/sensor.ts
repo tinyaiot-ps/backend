@@ -3,14 +3,25 @@ const Schema = mongoose.Schema;
 
 const sensorSchema = new Schema(
   {
+    applianceType: {
+      type: String,
+      enum: ['trashbin', 'noise-detector'],
+      required: true,
+    },
     trashbin: {
       type: Schema.Types.ObjectId,
       ref: 'Trashbin',
-      required: true,
+      required: false,
     },
+    noiseDetector: {
+      type: Schema.Types.ObjectId,
+      ref: 'NoiseDetector',
+      required: false,
+    },
+    // TODO: Change to actual fields instead of unit
     measureType: {
       type: String,
-      enum: ['fill_level', 'battery_level'],
+      enum: ['fill_level', 'battery_level', 'sound_level'],
       required: true,
     },
     unit: {
