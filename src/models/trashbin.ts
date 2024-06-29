@@ -30,6 +30,12 @@ const trashbinSchema = new Schema(
       max: 100,
       default: 0,
     },
+    batteryLevel: {
+      type: Number,
+      min: 0,
+      max: 100,
+      default: 100,
+    },
     sensors: [
       {
         type: Schema.Types.ObjectId,
