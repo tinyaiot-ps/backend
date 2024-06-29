@@ -32,6 +32,10 @@ const projectSchema = new Schema(
       type: Number,
       required: true,
     },
+    fillLevelChangeHours: {
+      type: Number,
+      default: 72,
+    },
     preferences: {
       fillThresholds: {
         type: [Number], // [integer, integer]
