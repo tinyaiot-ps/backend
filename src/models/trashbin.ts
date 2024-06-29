@@ -36,6 +36,16 @@ const trashbinSchema = new Schema(
       max: 100,
       default: 100,
     },
+    lastEmptied: {
+      type: Date,
+    },
+    fillLevel: {
+      type: Number,
+    },
+    fillLevelChange: {
+      type: Number,
+      default: 0,
+    },
     sensors: [
       {
         type: Schema.Types.ObjectId,
