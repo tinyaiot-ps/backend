@@ -33,6 +33,10 @@ const projectSchema = new Schema(
       type: [Number], // [longitude, latitude]
       required: true,
     },
+    startEndCoords: {
+      type: [Number], // [longitude, latitude]
+      required: true,
+    },
     initialZoom: {
       type: Number,
       required: true,
