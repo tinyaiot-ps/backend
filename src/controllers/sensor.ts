@@ -31,7 +31,7 @@ export const getSensorById = async (req: any, res: any, next: any) => {
 
 export const postSensor = async (req: any, res: any, next: any) => {
   try {
-    const { trashbinID, measureType } = req.body;
+    const { trashbinID, measureType, applianceType } = req.body;
     const userID = req.user.id;
     const userRole = req.user.role;
 
@@ -70,9 +70,14 @@ export const postSensor = async (req: any, res: any, next: any) => {
     const newSensor = new Sensor({
       trashbin: trashbinID,
       measureType,
+      applianceType,
     });
 
     await newSensor.save();
+
+    // Push the new sensor ID into the trashbin.sensors array
+    trashbin.sensors.push(newSensor._id);
+    await trashbin.save();
 
     return res
       .status(200)
