@@ -13,9 +13,9 @@ export const getAllProjects = async (req: any, res: any) => {
 
     let projects;
     if (userRole === 'SUPERADMIN') {
-      projects = await Project.find();
+      projects = await Project.find().populate('city');
     } else {
-      projects = await Project.find({ users: userId });
+      projects = await Project.find({ users: userId }).populate('city');
     }
 
     res.json({
@@ -37,7 +37,7 @@ export const getProjectById = async (req: any, res: any) => {
     let project;
 
     if (mongoose.Types.ObjectId.isValid(id)) {
-      project = await Project.findById(id);
+      project = await Project.findById(id).populate('city');
     } else {
       project = await Project.findOne({ identifier: id });
     }
