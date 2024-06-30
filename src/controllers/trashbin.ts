@@ -98,11 +98,23 @@ export const updateTrashItem = async (req: any, res: any, next: any) => {
         image,
       } = req.body;
 
-      trashbin.coordinates = [longitude, latitude];
-      trashbin.sensors = sensors;
-      trashbin.location = location;
-      trashbin.name = trashcanName;
-      trashbin.image = image;
+      console.log('Trashcan name', trashcanName);
+
+      if (longitude !== undefined && latitude !== undefined) {
+        trashbin.coordinates = [longitude, latitude];
+      }
+      if (sensors !== undefined) {
+        trashbin.sensors = sensors;
+      }
+      if (location !== undefined) {
+        trashbin.location = location;
+      }
+      if (trashcanName !== undefined) {
+        trashbin.name = trashcanName;
+      }
+      if (image !== undefined) {
+        trashbin.image = image;
+      }
 
       if (signalStrength !== undefined) {
         trashbin.signalStrength = signalStrength;
