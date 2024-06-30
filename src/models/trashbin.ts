@@ -30,6 +30,9 @@ const trashbinSchema = new Schema(
       max: 100,
       default: 0,
     },
+    image: {
+      type: String,
+    },
     batteryLevel: {
       type: Number,
       min: 0,

@@ -20,4 +20,6 @@ router.post('/', authenticateToken, createProject);
 // Update a project by ID
 router.patch('/:id', authenticateToken, updateProject);
 
+// temp script route
+
 export default router;
