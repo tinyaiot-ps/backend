@@ -13,6 +13,11 @@ const projectSchema = new Schema(
       required: true,
       unique: true,
     },
+    projectType: {
+      type: String,
+      enum: ['trash', 'noise'],
+      required: true,
+    },
     city: {
       type: Schema.Types.ObjectId,
       ref: 'City',
