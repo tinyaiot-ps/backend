@@ -5,11 +5,21 @@ import { User } from '../models/user';
 import { generateUniqueProjectIdentifier } from '../service';
 import mongoose from 'mongoose';
 
-// Get all projects
+// Get all projects a user is part of
 export const getAllProjects = async (req: any, res: any) => {
   try {
-    const projects = await Project.find();
+    const userId = req.user.id; // Assuming user id is stored in req.user
+    const userRole = req.user.role;
+
+    let projects;
+    if (userRole === 'SUPERADMIN') {
+      projects = await Project.find();
+    } else {
+      projects = await Project.find({ users: userId });
+    }
+
     res.json({
+      projectCount: projects?.length,
       projects,
     });
   } catch (error: any) {
@@ -21,6 +31,9 @@ export const getAllProjects = async (req: any, res: any) => {
 export const getProjectById = async (req: any, res: any) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id; // Assuming user id is stored in req.user
+    const userRole = req.user.role;
+
     let project;
 
     if (mongoose.Types.ObjectId.isValid(id)) {
@@ -31,6 +44,13 @@ export const getProjectById = async (req: any, res: any) => {
 
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
+    }
+
+    // Check if the user is authorized to view the project
+    if (userRole !== 'SUPERADMIN' && !project.users.includes(userId)) {
+      return res
+        .status(403)
+        .json({ message: 'Unauthorized to view this project' });
     }
 
     res.json({ project });
