@@ -5,11 +5,21 @@ import { User } from '../models/user';
 import { generateUniqueProjectIdentifier } from '../service';
 import mongoose from 'mongoose';
 
-// Get all projects
+// Get all projects a user is part of
 export const getAllProjects = async (req: any, res: any) => {
   try {
-    const projects = await Project.find();
+    const userId = req.user.id; // Assuming user id is stored in req.user
+    const userRole = req.user.role;
+
+    let projects;
+    if (userRole === 'SUPERADMIN') {
+      projects = await Project.find();
+    } else {
+      projects = await Project.find({ users: userId });
+    }
+
     res.json({
+      projectCount: projects?.length,
       projects,
     });
   } catch (error: any) {
