@@ -45,6 +45,11 @@ const projectSchema = new Schema(
       type: Number,
       default: 72,
     },
+    activeTimeInterval: {
+      type: Number,
+      min: 0,
+      max: 24,
+    },
     preferences: {
       fillThresholds: {
         type: [Number], // [integer, integer]
