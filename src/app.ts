@@ -22,13 +22,13 @@ dotenv.config();
 app.use(bodyParser.json());
 
 const client = mqtt.connect('mqtt://eu1.cloud.thethings.network:1883', {
-  username: 'trashbin-monitoring@ttn',
+  username: 'tinyaiot-project-seminar@ttn',
   password: process.env.MQTT_CLIENT_KEY,
 });
 
 client.on('connect', () => {
   console.log('Connected to MQTT broker');
-  const topic = 'v3/trashbin-monitoring@ttn/devices/eui-tinyaiot-device/up';
+  const topic = 'v3/tinyaiot-project-seminar@ttn/devices/trash-bin-01/up';
   client.subscribe(topic, () => {
     console.log(`Subscribe to topic '${topic}'`);
   });
