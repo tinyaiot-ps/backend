@@ -18,3 +18,16 @@ export const authenticateToken = (req: any, res: any, next: any) => {
     next(); // proceed to the next middleware function
   });
 };
+
+export const authenticateNoise = (req: any, res: any, next: any) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_STRING
+
+  if (
+    token !==
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidHlwZSI6Im5vaXNlIn0.f7B9OBDHlhRsDBRsENo1GPTjw-qBpGSP5nyhJCPUZF0'
+  )
+    return res.sendStatus(401); // check if token matches
+
+  next(); // proceed to the next middleware function
+};

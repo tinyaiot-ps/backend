@@ -5,6 +5,7 @@ import {
   getAllSensors,
   getSensorById,
   postSensor,
+  postNoiseSensor,
 } from '../controllers/sensor';
 
 const router = express.Router();
@@ -17,5 +18,7 @@ router.get('/:id', authenticateToken, getSensorById);
 
 // POST sensor
 router.post('/', authenticateToken, postSensor);
+
+router.post('/noise', authenticateToken, postNoiseSensor);
 
 export default router;

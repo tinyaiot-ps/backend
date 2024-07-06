@@ -86,3 +86,45 @@ export const postSensor = async (req: any, res: any, next: any) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const postNoiseSensor = async (req: any, res: any, next: any) => {
+  try {
+    const { projectID } = req.body;
+    const userID = req.user.id;
+    const userRole = req.user.role;
+
+    if (!projectID) {
+      return res.status(400).json({ message: 'Project ID is required' });
+    }
+
+    const project = await Project.findById(projectID).populate('users');
+    if (!project) {
+      return res.status(404).json({ message: 'Project not found' });
+    }
+
+    const isUserInProject = project.users.some(
+      (user) => user._id.toString() === userID.toString()
+    );
+
+    if (!isUserInProject && userRole !== 'SUPERADMIN') {
+      return res
+        .status(403)
+        .json({ message: 'User does not have access to this project' });
+    }
+
+    const newSensor = new Sensor({
+      applianceType: 'noise-detector',
+      noiseProject: projectID,
+      measureType: 'noise_level',
+      unit: 'decibel',
+    });
+
+    await newSensor.save();
+
+    return res
+      .status(200)
+      .json({ message: 'Noise Sensor created successfully', newSensor });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
