@@ -140,6 +140,29 @@ export const createTrashCollector = async (req: any, res: any, next: any) => {
   }
 };
 
+export const getTrashbinsAssignedToTrashCollector = async (
+  req: any,
+  res: any,
+  next: any
+) => {
+  try {
+    const trashCollectorId = req.params.trashCollectorId;
+
+    const existingTrashCollector = await TrashCollector.findById(
+      trashCollectorId
+    ).populate('assignedTrashbins');
+
+    if (!existingTrashCollector) {
+      return res.status(404).json({ message: 'Trash collector not found' });
+    }
+
+    const assignedTrashbins = existingTrashCollector.assignedTrashbins;
+    return res.status(200).json({ assignedTrashbins });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const testHistory = async (req: any, res: any, next: any) => {
   try {
     const testMessage = `{
