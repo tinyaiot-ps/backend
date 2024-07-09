@@ -46,9 +46,7 @@ const projectSchema = new Schema(
       default: 72,
     },
     activeTimeInterval: {
-      type: Number,
-      min: 0,
-      max: 24,
+      type: [Number],
     },
     noiseThreshold: {
       type: Number,

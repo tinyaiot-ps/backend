@@ -1,6 +1,7 @@
 import { Trashbin } from '../models/trashbin';
 import { TrashCollector } from '../models/trashcollector';
 import { ObjectId } from 'mongoose';
+import { mqttTrashParser } from '../utils/mqtt';
 
 export const assignTrashbinsToTrashCollector = async (
   req: any,
@@ -134,6 +135,58 @@ export const createTrashCollector = async (req: any, res: any, next: any) => {
         message: 'Unauthorized to create trashcollector',
       });
     }
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const testHistory = async (req: any, res: any, next: any) => {
+  try {
+    const testMessage = `{
+	"end_device_ids": {
+		"device_id": "trash-bin-01",
+		"application_ids": {
+			"application_id": "tinyaiot-project-seminar"
+		},
+		"dev_eui": "9876B6FFFE12FD2D",
+		"join_eui": "0000000000000000"
+	},
+	"correlation_ids": [
+		"as:up:01J1WZCHYT2RYVV9P3KDP3GGKC",
+		"rpc:/ttn.lorawan.v3.AppAs/SimulateUplink:0c89dab4-4185-43b8-ab1f-78608a201e6b"
+	],
+	"received_at": "2024-07-03T18:58:21.774534711Z",
+	"uplink_message": {
+		"f_port": 1,
+		"frm_payload": "PA/CAQ==",
+		"rx_metadata": [
+			{
+				"gateway_ids": {
+					"gateway_id": "test"
+				},
+				"rssi": -110,
+				"channel_rssi": -110,
+				"snr": 4.2
+			}
+		],
+		"settings": {
+			"data_rate": {
+				"lora": {
+					"bandwidth": 125000,
+					"spreading_factor": 7
+				}
+			},
+			"frequency": "868000000"
+		}
+	},
+	"simulated": true
+}`;
+
+    const object = mqttTrashParser(JSON.parse(testMessage));
+
+    console.log('Object =>', object);
+
+    return res.status(201).json({ message: 'Success!', object });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
   }
