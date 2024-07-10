@@ -101,7 +101,7 @@ export const updateTrashItem = async (req: any, res: any, next: any) => {
       console.log('Trashcan name', trashcanName);
 
       if (longitude !== undefined && latitude !== undefined) {
-        trashbin.coordinates = [longitude, latitude];
+        trashbin.coordinates = [latitude, longitude];
       }
       if (sensors !== undefined) {
         trashbin.sensors = sensors;
