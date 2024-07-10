@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTrashCollector = exports.assignTrashbinsToTrashCollector = void 0;
+exports.testHistory = exports.getTrashbinsAssignedToTrashCollector = exports.createTrashCollector = exports.assignTrashbinsToTrashCollector = void 0;
 const trashbin_1 = require("../models/trashbin");
 const trashcollector_1 = require("../models/trashcollector");
+const mqtt_1 = require("../utils/mqtt");
 const assignTrashbinsToTrashCollector = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const userRole = req.user.role;
@@ -119,3 +120,68 @@ const createTrashCollector = (req, res, next) => __awaiter(void 0, void 0, void 
     }
 });
 exports.createTrashCollector = createTrashCollector;
+const getTrashbinsAssignedToTrashCollector = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const trashCollectorId = req.params.trashCollectorId;
+        const existingTrashCollector = yield trashcollector_1.TrashCollector.findById(trashCollectorId).populate('assignedTrashbins');
+        if (!existingTrashCollector) {
+            return res.status(404).json({ message: 'Trash collector not found' });
+        }
+        const assignedTrashbins = existingTrashCollector.assignedTrashbins;
+        return res.status(200).json({ assignedTrashbins });
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+exports.getTrashbinsAssignedToTrashCollector = getTrashbinsAssignedToTrashCollector;
+const testHistory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const testMessage = `{
+	"end_device_ids": {
+		"device_id": "trash-bin-01",
+		"application_ids": {
+			"application_id": "tinyaiot-project-seminar"
+		},
+		"dev_eui": "9876B6FFFE12FD2D",
+		"join_eui": "0000000000000000"
+	},
+	"correlation_ids": [
+		"as:up:01J1WZCHYT2RYVV9P3KDP3GGKC",
+		"rpc:/ttn.lorawan.v3.AppAs/SimulateUplink:0c89dab4-4185-43b8-ab1f-78608a201e6b"
+	],
+	"received_at": "2024-07-03T18:58:21.774534711Z",
+	"uplink_message": {
+		"f_port": 1,
+		"frm_payload": "PA/CAQ==",
+		"rx_metadata": [
+			{
+				"gateway_ids": {
+					"gateway_id": "test"
+				},
+				"rssi": -110,
+				"channel_rssi": -110,
+				"snr": 4.2
+			}
+		],
+		"settings": {
+			"data_rate": {
+				"lora": {
+					"bandwidth": 125000,
+					"spreading_factor": 7
+				}
+			},
+			"frequency": "868000000"
+		}
+	},
+	"simulated": true
+}`;
+        const object = (0, mqtt_1.mqttTrashParser)(JSON.parse(testMessage));
+        console.log('Object =>', object);
+        return res.status(201).json({ message: 'Success!', object });
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+exports.testHistory = testHistory;

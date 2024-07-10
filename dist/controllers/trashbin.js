@@ -19,6 +19,7 @@ const trashbin_2 = require("../models/trashbin");
 const mongoose_1 = __importDefault(require("mongoose"));
 const createTrashItem = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        console.log('Inside Trash Can');
         const projectId = req.body.project;
         const trashcanName = req.body.name;
         const longitude = req.body.longitude;
@@ -43,6 +44,7 @@ const createTrashItem = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             //   Create the trashbin here
             const identifer = yield (0, trashbin_1.generateUniqueTrashbinIdentifier)(projectId);
             // Fetch location string from the longitude and latitude
+            console.log('Coming inside line # 41');
             const trashbin = new trashbin_2.Trashbin({
                 name: trashcanName,
                 identifier: identifer,
@@ -89,7 +91,7 @@ const updateTrashItem = (req, res, next) => __awaiter(void 0, void 0, void 0, fu
             const { longitude, latitude, sensors, location, name: trashcanName, signalStrength, batteryLevel, image, } = req.body;
             console.log('Trashcan name', trashcanName);
             if (longitude !== undefined && latitude !== undefined) {
-                trashbin.coordinates = [longitude, latitude];
+                trashbin.coordinates = [latitude, longitude];
             }
             if (sensors !== undefined) {
                 trashbin.sensors = sensors;
@@ -130,10 +132,14 @@ const getTrashItemById = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         const trashbinId = req.params.id;
         let trashbin;
         if (mongoose_1.default.Types.ObjectId.isValid(trashbinId)) {
-            trashbin = yield trashbin_2.Trashbin.findById(trashbinId).populate('assignee');
+            trashbin = yield trashbin_2.Trashbin.findById(trashbinId)
+                .populate('assignee')
+                .populate('project');
         }
         else {
-            trashbin = yield trashbin_2.Trashbin.findOne({ identifier: trashbinId }).populate('assignee');
+            trashbin = yield trashbin_2.Trashbin.findOne({ identifier: trashbinId })
+                .populate('assignee')
+                .populate('project');
         }
         if (!trashbin) {
             return res.status(404).json({ message: 'Trashbin not found' });
@@ -153,13 +159,17 @@ const getAllTrashItems = (req, res, next) => __awaiter(void 0, void 0, void 0, f
         if (projectQuery) {
             // Check if the projectQuery is a valid ObjectId
             if (mongoose_1.default.Types.ObjectId.isValid(projectQuery)) {
-                trashbins = yield trashbin_2.Trashbin.find({ project: projectQuery }).populate('assignee');
+                trashbins = yield trashbin_2.Trashbin.find({ project: projectQuery })
+                    .populate('assignee')
+                    .populate('project');
             }
             else {
                 // If not a valid ObjectId, assume it's an identifier
                 const project = yield project_1.Project.findOne({ identifier: projectQuery });
                 if (project) {
-                    trashbins = yield trashbin_2.Trashbin.find({ project: project._id }).populate('assignee');
+                    trashbins = yield trashbin_2.Trashbin.find({ project: project._id })
+                        .populate('assignee')
+                        .populate('project');
                 }
                 else {
                     return res.status(404).json({ message: 'Project not found' });

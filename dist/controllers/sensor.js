@@ -9,8 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postSensor = exports.getSensorById = exports.getAllSensors = void 0;
+exports.postNoiseSensor = exports.postSensor = exports.getSensorById = exports.getAllSensors = void 0;
 const trashbin_1 = require("../models/trashbin");
+const project_1 = require("../models/project");
 const sensor_1 = require("../models/sensor");
 const getAllSensors = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -45,7 +46,7 @@ const postSensor = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         const { trashbinID, measureType, applianceType } = req.body;
         const userID = req.user.id;
         const userRole = req.user.role;
-        if (!trashbinID) {
+        if (!trashbinID && applianceType === 'trashbin') {
             return res.status(400).json({ message: 'Trashbin ID is required' });
         }
         const trashbin = yield trashbin_1.Trashbin.findById(trashbinID).populate({
@@ -87,3 +88,37 @@ const postSensor = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.postSensor = postSensor;
+const postNoiseSensor = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { projectID } = req.body;
+        const userID = req.user.id;
+        const userRole = req.user.role;
+        if (!projectID) {
+            return res.status(400).json({ message: 'Project ID is required' });
+        }
+        const project = yield project_1.Project.findById(projectID).populate('users');
+        if (!project) {
+            return res.status(404).json({ message: 'Project not found' });
+        }
+        const isUserInProject = project.users.some((user) => user._id.toString() === userID.toString());
+        if (!isUserInProject && userRole !== 'SUPERADMIN') {
+            return res
+                .status(403)
+                .json({ message: 'User does not have access to this project' });
+        }
+        const newSensor = new sensor_1.Sensor({
+            applianceType: 'noise-detector',
+            noiseProject: projectID,
+            measureType: 'noise_level',
+            unit: 'decibel',
+        });
+        yield newSensor.save();
+        return res
+            .status(200)
+            .json({ message: 'Noise Sensor created successfully', newSensor });
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+exports.postNoiseSensor = postNoiseSensor;

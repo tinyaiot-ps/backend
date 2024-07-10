@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.authenticateToken = exports.isTokenExpired = void 0;
+exports.authenticateNoise = exports.authenticateToken = exports.isTokenExpired = void 0;
 const jwt = require('jsonwebtoken');
 const isTokenExpired = (token) => Date.now() >= JSON.parse(atob(token.split('.')[1])).exp * 1000;
 exports.isTokenExpired = isTokenExpired;
@@ -19,3 +19,12 @@ const authenticateToken = (req, res, next) => {
     });
 };
 exports.authenticateToken = authenticateToken;
+const authenticateNoise = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN_STRING
+    if (token !==
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwidHlwZSI6Im5vaXNlIn0.f7B9OBDHlhRsDBRsENo1GPTjw-qBpGSP5nyhJCPUZF0')
+        return res.sendStatus(401); // check if token matches
+    next(); // proceed to the next middleware function
+};
+exports.authenticateNoise = authenticateNoise;
