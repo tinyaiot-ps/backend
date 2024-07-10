@@ -24,7 +24,10 @@ dotenv.config();
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: [`http://localhost:${PORT}`],
+  origin: [
+    `http://localhost:${PORT}`,
+    'https://beamish-cendol-b3537c.netlify.app',
+  ],
   credentials: true,
 };
 
