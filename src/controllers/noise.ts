@@ -6,8 +6,8 @@ export const addNoiseHistory = async (req: any, res: any, next: any) => {
   try {
     const { projectId, sensorId, prediction, value } = req.body;
 
-    // For now always send the projectId as 6681292999d92893669ea287
-    // For now always send the sensorId as "668945bfbc487cfc392c0068"
+    // For now always send the projectId as 668e605974f99f35291be526
+    // For now always send the sensorId as 668e92ca094613ff3bade435
 
     // Check if the project exists
     const project = await Project.findById(projectId);
