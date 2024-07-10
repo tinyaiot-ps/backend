@@ -5,6 +5,7 @@ import mongoose from 'mongoose';
 
 export const createTrashItem = async (req: any, res: any, next: any) => {
   try {
+    console.log('Inside Trash Can');
     const projectId = req.body.project;
     const trashcanName = req.body.name;
     const longitude = req.body.longitude;
@@ -37,6 +38,8 @@ export const createTrashItem = async (req: any, res: any, next: any) => {
       const identifer = await generateUniqueTrashbinIdentifier(projectId);
 
       // Fetch location string from the longitude and latitude
+
+      console.log('Coming inside line # 41');
 
       const trashbin = new Trashbin({
         name: trashcanName,

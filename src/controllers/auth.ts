@@ -41,6 +41,7 @@ export const loginUser = async (req: any, res: any) => {
 };
 
 export const signupUser = async (req: any, res: any) => {
+  console.log('Coming inside signup ====>');
   const { role, email, password, projects, preferences } = req.body;
   const currentUserId = req.user.id; // Assuming user ID is attached to the request by auth middleware
   const currentUserRole = req.user.role; // Assuming user role is attached to the request by auth middleware
@@ -57,6 +58,9 @@ export const signupUser = async (req: any, res: any) => {
         .status(403)
         .json({ message: 'Cannot create another SUPERADMIN.' });
     }
+
+    console.log('Current User Id =>', currentUserId);
+    console.log('Current User Role =>', currentUserRole);
 
     // Validate email uniqueness
     const existingUser = await User.findOne({ email });
@@ -88,6 +92,39 @@ export const signupUser = async (req: any, res: any) => {
     res
       .status(201)
       .json({ message: 'User created successfully.', user: newUser });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+export const createSuperAdmin = async (req: any, res: any) => {
+  const { email, password, preferences } = req.body;
+
+  try {
+    // Validate email uniqueness
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(409).json({ message: 'Email already in use.' });
+    }
+
+    // Hash password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create superadmin
+    const newSuperAdmin = new User({
+      role: 'SUPERADMIN',
+      email,
+      password: hashedPassword,
+      preferences,
+    });
+
+    await newSuperAdmin.save();
+
+    res.status(201).json({
+      message: 'SuperAdmin created successfully.',
+      user: newSuperAdmin,
+    });
   } catch (error: any) {
     res.status(500).json({ message: 'Server error', error: error.message });
   }
