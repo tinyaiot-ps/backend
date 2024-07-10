@@ -11,6 +11,7 @@ import trashbinRouter from './routes/trashbin';
 import sensorRouter from './routes/sensor';
 import trashCollectorRouter from './routes/trashCollector';
 import noiseRouter from './routes/noise';
+import historyRouter from './routes/history';
 
 const mqtt = require('mqtt');
 
@@ -51,6 +52,7 @@ app.use('/api/v1/trashbin', trashbinRouter);
 app.use('/api/v1/sensor', sensorRouter);
 app.use('/api/v1/trash-collector', trashCollectorRouter);
 app.use('/api/v1/noise', noiseRouter);
+app.use('/api/v1/history', historyRouter);
 
 // Connect to MongoDB
 mongoose
