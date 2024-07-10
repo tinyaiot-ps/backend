@@ -35,7 +35,7 @@ export const postSensor = async (req: any, res: any, next: any) => {
     const userID = req.user.id;
     const userRole = req.user.role;
 
-    if (!trashbinID) {
+    if (!trashbinID && applianceType === 'trashbin') {
       return res.status(400).json({ message: 'Trashbin ID is required' });
     }
 
