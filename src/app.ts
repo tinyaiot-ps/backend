@@ -25,8 +25,9 @@ app.use(bodyParser.json());
 
 const corsOptions = {
   origin: [
-    `http://localhost:${PORT}`,
     'https://beamish-cendol-b3537c.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:3001',
   ],
   credentials: true,
 };
