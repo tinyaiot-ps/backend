@@ -24,15 +24,7 @@ dotenv.config();
 // Middleware
 app.use(bodyParser.json());
 
-const corsOptions = {
-  origin: [
-    'https://beamish-cendol-b3537c.netlify.app',
-    'http://localhost:3000',
-    'http://localhost:3001',
-  ],
-  credentials: true,
-};
-
+// Update CORS policy to whitelist every client domain
 app.use((req: any, res: any, next: any) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -42,8 +34,6 @@ app.use((req: any, res: any, next: any) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
-
-app.use(cors(corsOptions));
 
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/city', cityRouter);
