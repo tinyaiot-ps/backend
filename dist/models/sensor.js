@@ -17,20 +17,19 @@ const sensorSchema = new Schema({
         ref: 'Trashbin',
         required: false,
     },
-    noiseDetector: {
-        type: Schema.Types.ObjectId,
-        ref: 'NoiseDetector',
-        required: false,
-    },
     measureType: {
         type: String,
-        enum: ['fill_level', 'battery_level', 'sound_level'],
+        enum: ['fill_level', 'battery_level', 'noise_level'],
         required: true,
     },
     unit: {
         type: String,
-        enum: ['percentage'],
+        enum: ['percentage', 'decibel'],
         default: 'percentage',
+    },
+    noiseProject: {
+        type: Schema.Types.ObjectId,
+        ref: 'Project',
     },
     history: [
         {

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateUser = exports.signupUser = exports.loginUser = void 0;
+exports.updateUser = exports.createSuperAdmin = exports.signupUser = exports.loginUser = void 0;
 const user_1 = require("../models/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
@@ -49,6 +49,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.loginUser = loginUser;
 const signupUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('Coming inside signup ====>');
     const { role, email, password, projects, preferences } = req.body;
     const currentUserId = req.user.id; // Assuming user ID is attached to the request by auth middleware
     const currentUserRole = req.user.role; // Assuming user role is attached to the request by auth middleware
@@ -64,6 +65,8 @@ const signupUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .status(403)
                 .json({ message: 'Cannot create another SUPERADMIN.' });
         }
+        console.log('Current User Id =>', currentUserId);
+        console.log('Current User Role =>', currentUserRole);
         // Validate email uniqueness
         const existingUser = yield user_1.User.findOne({ email });
         if (existingUser) {
@@ -95,6 +98,35 @@ const signupUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.signupUser = signupUser;
+const createSuperAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email, password, preferences } = req.body;
+    try {
+        // Validate email uniqueness
+        const existingUser = yield user_1.User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({ message: 'Email already in use.' });
+        }
+        // Hash password
+        const salt = yield bcrypt_1.default.genSalt(10);
+        const hashedPassword = yield bcrypt_1.default.hash(password, salt);
+        // Create superadmin
+        const newSuperAdmin = new user_1.User({
+            role: 'SUPERADMIN',
+            email,
+            password: hashedPassword,
+            preferences,
+        });
+        yield newSuperAdmin.save();
+        res.status(201).json({
+            message: 'SuperAdmin created successfully.',
+            user: newSuperAdmin,
+        });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
+    }
+});
+exports.createSuperAdmin = createSuperAdmin;
 const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { userId, role, email, password, projects, preferences } = req.body;
     const currentUserId = req.user.id;

@@ -49,6 +49,18 @@ const projectSchema = new Schema({
         type: Number,
         default: 72,
     },
+    activeTimeInterval: {
+        type: [Number],
+    },
+    noiseThreshold: {
+        type: Number,
+        min: 1,
+    },
+    confidenceThreshold: {
+        type: Number,
+        min: 0,
+        max: 1,
+    },
     preferences: {
         fillThresholds: {
             type: [Number], // [integer, integer]

@@ -13,4 +13,5 @@ router.get('/', authenticate_1.authenticateToken, sensor_1.getAllSensors); // Co
 router.get('/:id', authenticate_1.authenticateToken, sensor_1.getSensorById);
 // POST sensor
 router.post('/', authenticate_1.authenticateToken, sensor_1.postSensor);
+router.post('/noise', authenticate_1.authenticateToken, sensor_1.postNoiseSensor);
 exports.default = router;

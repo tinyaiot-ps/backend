@@ -8,5 +8,6 @@ const router = (0, express_1.Router)();
 router.post('/login', auth_1.loginUser);
 // Signup route
 router.post('/signup', authenticate_1.authenticateToken, auth_1.signupUser);
+// router.post('/create/superadmin', createSuperAdmin);
 router.patch('/user', authenticate_1.authenticateToken, auth_1.updateUser);
 exports.default = router;

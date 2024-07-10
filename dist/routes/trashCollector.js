@@ -6,4 +6,6 @@ const authenticate_1 = require("../middleware/authenticate");
 const router = (0, express_1.Router)();
 router.post('/', authenticate_1.authenticateToken, trashCollector_1.createTrashCollector);
 router.post('/assign', authenticate_1.authenticateToken, trashCollector_1.assignTrashbinsToTrashCollector);
+router.get('/:trashCollectorId/trashbins', authenticate_1.authenticateToken, trashCollector_1.getTrashbinsAssignedToTrashCollector);
+router.get('/history', trashCollector_1.testHistory);
 exports.default = router;
