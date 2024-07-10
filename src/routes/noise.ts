@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   addNoiseHistory,
   getNoiseSensorHistoryBySensorId,
+  anySample,
 } from '../controllers/noise';
 import {
   authenticateNoise,
@@ -17,5 +18,7 @@ router.get(
   authenticateToken,
   getNoiseSensorHistoryBySensorId
 );
+
+router.get('/any-sample', anySample);
 
 export default router;
