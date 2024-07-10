@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 5001;
 
 dotenv.config();
 
-// import './mqttClient';
+import './mqttClient';
 // Middleware
 app.use(bodyParser.json());
 
