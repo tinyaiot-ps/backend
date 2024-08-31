@@ -626,4 +626,7 @@ This concludes the API documentation section.
 
 ## License
 
-This project is licensed under the ISC License.
+&copy; 2024 The TinyAIoT Project Seminar Team at the University of Münster.<br/>
+This documentation is licensed under the [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/) license unless explicitly noted otherwise.
+
+![Creative Commons Attribution 4.0 International license icon](https://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by.svg)
